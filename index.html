@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MongoDB Discovery Question Wall</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --mdb-bg-dark: #001e2b;
+      --mdb-bg-darker: #000e16;
+      --mdb-card-bg: #04141e;
+      --mdb-accent: #00ed64;
+      --mdb-accent-soft: rgba(0, 237, 100, 0.08);
+      --mdb-text-main: #f5f7f8;
+      --mdb-text-muted: #a0b5c0;
+      --mdb-border-subtle: rgba(255, 255, 255, 0.08);
+      --mdb-danger: #ff4b4b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--mdb-text-main);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(0, 237, 100, 0.08) 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(0, 237, 100, 0.14) 0, transparent 60%),
+        linear-gradient(135deg, var(--mdb-bg-dark), #002b36 45%, var(--mdb-bg-darker));
+    }
+
+    body.presenter {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(0, 237, 100, 0.08) 0, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(0, 237, 100, 0.15) 0, transparent 55%),
+        linear-gradient(145deg, #000b13, #001e2b 40%, #000b13);
+    }
+
+    a {
+      color: var(--mdb-accent);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px 16px 24px;
+    }
+
+    .shell-attendee {
+      padding-top: 18px;
+      padding-bottom: 26px;
+    }
+
+    .shell-presenter {
+      padding-top: 12px;
+      padding-bottom: 24px;
+    }
+
+    .card {
+      background: var(--mdb-card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--mdb-border-subtle);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+      padding: 14px 16px 16px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-header h2,
+    .card-header h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .card-header small {
+      font-size: 0.78rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      white-space: nowrap;
+      transition: background 0.14s ease, transform 0.08s ease, box-shadow 0.14s ease, color 0.14s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--mdb-accent), #0ddf7d);
+      color: #00141c;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.9) inset,
+        0 12px 25px rgba(0, 237, 100, 0.4);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #00d85c, #0bc56f);
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.9) inset,
+        0 15px 32px rgba(0, 237, 100, 0.5);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.9) inset,
+        0 8px 18px rgba(0, 0, 0, 0.8);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.9) inset;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--mdb-text-muted);
+      padding-inline: 10px;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--mdb-text-main);
+    }
+
+    .btn-danger {
+      color: #ffc7c7;
+    }
+
+    .btn-danger:hover {
+      color: #ffe1e1;
+      background: rgba(255, 75, 75, 0.12);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      background: rgba(0, 0, 0, 0.5);
+      color: var(--mdb-text-muted);
+    }
+
+    .pill-accent {
+      background: var(--mdb-accent-soft);
+      color: var(--mdb-accent);
+    }
+
+    textarea {
+      width: 100%;
+      resize: vertical;
+      min-height: 60px;
+      max-height: 220px;
+      padding: 8px 9px;
+      border-radius: 9px;
+      border: 1px solid rgba(157, 178, 191, 0.4);
+      background: rgba(0, 19, 27, 0.96);
+      color: var(--mdb-text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    textarea::placeholder {
+      color: rgba(160, 181, 192, 0.75);
+    }
+
+    textarea:focus {
+      border-color: var(--mdb-accent);
+      box-shadow: 0 0 0 1px rgba(0, 237, 100, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.6) inset;
+      background: rgba(0, 24, 33, 0.98);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 9px;
+      border: 1px solid rgba(157, 178, 191, 0.6);
+      background: rgba(0, 25, 34, 0.96);
+      color: var(--mdb-text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--mdb-accent);
+      box-shadow: 0 0 0 1px rgba(0, 237, 100, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.6) inset;
+      background: rgba(0, 24, 33, 0.98);
+    }
+
+    .countdown-pill {
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: var(--mdb-accent-soft);
+      color: var(--mdb-accent);
+      font-size: 0.78rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .countdown-number {
+      font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+        Consolas, "Liberation Mono", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+      display: inline-block;
+      min-width: 3ch;
+      text-align: center;
+    }
+
+    /* Attendee app */
+
+    #attendeeApp {
+      display: none;
+    }
+
+    .attendee-header {
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .attendee-header-title h1 {
+      margin: 0 0 4px;
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+    }
+
+    .attendee-header-title p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .attendee-name-block {
+      text-align: right;
+      font-size: 0.8rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .attendee-name-block button {
+      font-size: 0.78rem;
+    }
+
+    .name-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .name-modal {
+      width: 100%;
+      max-width: 420px;
+      background: radial-gradient(circle at 0 0, rgba(0, 237, 100, 0.2), transparent 65%),
+                  rgba(0, 12, 20, 0.98);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 22px 80px rgba(0, 0, 0, 0.9);
+      padding: 18px 18px 16px;
+    }
+
+    .name-modal h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .name-modal p {
+      margin: 0 0 12px;
+      font-size: 0.86rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .name-modal-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .phase-banner {
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+      color: var(--mdb-text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .phase-banner strong {
+      color: var(--mdb-accent);
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 720px) {
+      .category-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .category-card {
+      background: rgba(0, 13, 20, 0.96);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      padding: 8px 9px 10px;
+    }
+
+    .category-card h3 {
+      margin: 0 0 4px;
+      font-size: 0.9rem;
+    }
+
+    .category-card p {
+      margin: 0 0 6px;
+      font-size: 0.76rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .submit-row {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.78rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .error-message {
+      color: var(--mdb-danger);
+      font-size: 0.8rem;
+      min-height: 1.1em;
+    }
+
+    .my-questions-section {
+      margin-top: 14px;
+    }
+
+    .my-questions-section h3 {
+      margin: 0 0 4px;
+      font-size: 0.9rem;
+    }
+
+    .my-questions-section p {
+      margin: 0 0 4px;
+      font-size: 0.8rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .my-questions-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    @media (min-width: 720px) {
+      .my-questions-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .my-question-list {
+      font-size: 0.8rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .my-question-item {
+      border-radius: 9px;
+      background: rgba(0, 13, 19, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 7px;
+      margin-bottom: 5px;
+    }
+
+    .my-question-text {
+      margin-bottom: 4px;
+      color: var(--mdb-text-main);
+    }
+
+    .my-question-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      font-size: 0.75rem;
+    }
+
+    .my-question-actions button {
+      padding: 2px 6px;
+    }
+
+    .vote-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 720px) {
+      .vote-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .vote-list {
+      background: rgba(0, 13, 20, 0.9);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      padding: 8px 9px;
+      max-height: 340px;
+      overflow-y: auto;
+    }
+
+    .vote-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 6px 5px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .vote-item input[type="checkbox"] {
+      margin-top: 3px;
+    }
+
+    .vote-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .vote-item-text {
+      font-size: 0.82rem;
+      margin-bottom: 2px;
+    }
+
+    .vote-item-meta {
+      font-size: 0.72rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .vote-help {
+      font-size: 0.8rem;
+      color: var(--mdb-text-muted);
+      margin-top: 6px;
+    }
+
+    /* Presenter app */
+
+    #presenterApp {
+      display: none;
+    }
+
+    .presenter-top-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.8fr);
+      gap: 14px;
+      margin-bottom: 12px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 900px) {
+      .presenter-top-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .qr-panel {
+      position: relative;
+      padding: 10px 12px 12px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 0 0, rgba(0, 237, 100, 0.24), transparent 60%),
+        rgba(0, 12, 20, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.9);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .qr-img-wrap {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 10% 0, rgba(0, 237, 100, 0.3), transparent 60%),
+        radial-gradient(circle at 80% 100%, rgba(0, 237, 100, 0.2), transparent 60%),
+        #00141c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 237, 100, 0.7);
+      flex-shrink: 0;
+    }
+
+    .qr-img-wrap img {
+      max-width: 96%;
+      max-height: 96%;
+      display: block;
+    }
+
+    .qr-text {
+      font-size: 0.88rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .qr-text h1 {
+      margin: 0 0 4px;
+      font-size: 1.26rem;
+      letter-spacing: 0.03em;
+    }
+
+    .qr-url {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--mdb-accent);
+      word-break: break-all;
+      opacity: 0.9;
+    }
+
+    .presenter-controls {
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(0, 8, 14, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .presenter-controls-top {
+      font-size: 0.86rem;
+    }
+
+    .presenter-controls-top h2 {
+      margin: 0 0 4px;
+      font-size: 1.02rem;
+    }
+
+    .presenter-controls-top p {
+      margin: 0;
+      color: var(--mdb-text-muted);
+    }
+
+    .presenter-controls-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .presenter-countdown {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--mdb-accent);
+    }
+
+    .board {
+      margin-top: 6px;
+      border-radius: 16px;
+      padding: 10px 10px 12px;
+      background:
+        radial-gradient(circle at 0 0, rgba(0, 237, 100, 0.18), transparent 50%),
+        rgba(0, 6, 10, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.95);
+    }
+
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .board-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .board-column {
+      background: rgba(0, 8, 12, 0.96);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 8px 10px;
+      display: flex;
+      flex-direction: column;
+      max-height: 520px;
+    }
+
+    .board-column-header {
+      margin-bottom: 4px;
+    }
+
+    .board-column-header h3 {
+      margin: 0;
+      font-size: 0.94rem;
+    }
+
+    .board-column-header p {
+      margin: 0;
+      font-size: 0.76rem;
+      color: var(--mdb-text-muted);
+    }
+
+    .board-list {
+      margin-top: 4px;
+      overflow-y: auto;
+      flex: 1;
+      padding-right: 4px;
+    }
+
+    .board-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .board-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .board-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+    }
+
+    .board-item {
+      border-radius: 10px;
+      background: radial-gradient(circle at 0 0, rgba(0, 237, 100, 0.12), transparent 60%),
+                  rgba(0, 13, 20, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 7px 7px;
+      margin-bottom: 4px;
+      font-size: 0.86rem;
+    }
+
+    .board-item-text {
+      margin-bottom: 3px;
+    }
+
+    .board-item-meta {
+      font-size: 0.76rem;
+      color: var(--mdb-text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .board-item-meta strong {
+      color: var(--mdb-accent);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .results-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .results-column {
+      background: rgba(0, 8, 12, 0.96);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 9px 10px;
+      font-size: 0.86rem;
+    }
+
+    .results-column h3 {
+      margin: 0 0 4px;
+      font-size: 0.94rem;
+    }
+
+    .results-item {
+      border-radius: 9px;
+      background: rgba(0, 13, 19, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 7px;
+      margin-bottom: 4px;
+    }
+
+    .results-item-rank {
+      font-size: 0.75rem;
+      color: var(--mdb-text-muted);
+      margin-bottom: 2px;
+    }
+
+    .results-item-text {
+      margin-bottom: 3px;
+    }
+
+    .results-item-meta {
+      font-size: 0.76rem;
+      color: var(--mdb-text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .best-asker {
+      margin-top: 10px;
+      padding: 7px 9px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 0 0, rgba(0, 237, 100, 0.22), transparent 60%),
+                  rgba(0, 10, 14, 0.98);
+      border: 1px solid rgba(0, 237, 100, 0.6);
+      font-size: 0.86rem;
+    }
+
+    footer {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: var(--mdb-text-muted);
+      text-align: right;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <!-- ATTENDEE APP -->
+  <div id="attendeeApp" class="shell shell-attendee">
+    <div class="attendee-header">
+      <div class="attendee-header-title">
+        <h1>Discovery Question Workshop</h1>
+        <p>Suggest and vote on field discovery questions for MongoDB use cases.</p>
+      </div>
+      <div class="attendee-name-block">
+        <div>Signed in as: <strong id="attendeeNameLabel">–</strong></div>
+        <button id="editNameBtn" class="btn btn-ghost" type="button">Change name</button>
+      </div>
+    </div>
+
+    <div class="phase-banner">
+      <div>
+        Phase: <strong id="attendeePhaseLabel">Loading…</strong>
+      </div>
+      <div id="attendeeCountdownWrapper" class="hidden">
+        <span class="countdown-pill">
+          Time left: <span id="attendeeCountdown" class="countdown-number">60</span>s
+        </span>
+      </div>
+    </div>
+
+    <!-- ENTRY VIEW -->
+    <div id="attendeeEntryView" class="card hidden">
+      <div class="card-header">
+        <div>
+          <h2>Suggest discovery questions</h2>
+          <small>
+            One question per category per submit. You can edit or delete your own questions later.
+          </small>
+        </div>
+      </div>
+      <div class="category-grid">
+        <div class="category-card">
+          <h3>Users</h3>
+          <p>Questions about end-users, personas, and user journeys.</p>
+          <textarea id="inputUsers" placeholder="E.g. Who are the primary users of this application?"></textarea>
+        </div>
+        <div class="category-card">
+          <h3>Queries</h3>
+          <p>Questions about access patterns, workloads, and SLAs.</p>
+          <textarea id="inputQueries" placeholder="E.g. What are the most critical queries or reports today?"></textarea>
+        </div>
+        <div class="category-card">
+          <h3>Data Sources</h3>
+          <p>Questions about upstream systems and data movement.</p>
+          <textarea id="inputDatasources" placeholder="E.g. Where does this data originate and how often is it updated?"></textarea>
+        </div>
+      </div>
+      <div class="submit-row">
+        <div class="error-message" id="entryError"></div>
+        <button id="submitQuestionsBtn" class="btn btn-primary" type="button">
+          Submit questions
+        </button>
+      </div>
+
+      <div class="my-questions-section">
+        <h3>My submitted questions</h3>
+        <p>You can edit or delete your own questions while entries are open.</p>
+        <div class="my-questions-grid">
+          <div>
+            <strong>Users</strong>
+            <div id="myUsersList" class="my-question-list"></div>
+          </div>
+          <div>
+            <strong>Queries</strong>
+            <div id="myQueriesList" class="my-question-list"></div>
+          </div>
+          <div>
+            <strong>Data Sources</strong>
+            <div id="myDatasourcesList" class="my-question-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOTING VIEW -->
+    <div id="attendeeVotingView" class="card hidden">
+      <div class="card-header">
+        <div>
+          <h2>Vote on the strongest questions</h2>
+          <small>
+            Pick up to <strong>3 questions per category</strong>. Votes are anonymous.
+          </small>
+        </div>
+        <div>
+          <span class="countdown-pill">
+            Time left: <span id="attendeeVotingCountdown" class="countdown-number">60</span>s
+          </span>
+        </div>
+      </div>
+      <div class="vote-grid">
+        <div>
+          <strong>Users</strong>
+          <div id="voteListUsers" class="vote-list"></div>
+        </div>
+        <div>
+          <strong>Queries</strong>
+          <div id="voteListQueries" class="vote-list"></div>
+        </div>
+        <div>
+          <strong>Data Sources</strong>
+          <div id="voteListDatasources" class="vote-list"></div>
+        </div>
+      </div>
+      <div class="submit-row">
+        <div class="vote-help">
+          Selections auto‑save. You can adjust them until the timer ends.
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS VIEW -->
+    <div id="attendeeResultsView" class="card hidden">
+      <div class="card-header">
+        <div>
+          <h2>Results</h2>
+          <small>
+            Voting has finished. Results are on the main screen.
+          </small>
+        </div>
+      </div>
+      <p style="font-size:0.9rem;color:var(--mdb-text-muted);margin:4px 0 0;">
+        Thanks for participating. Watch the presenter screen for the top questions and best asker.
+      </p>
+    </div>
+  </div>
+
+  <!-- Name modal -->
+  <div id="nameModalBackdrop" class="name-modal-backdrop hidden">
+    <div class="name-modal">
+      <h2>What name should we use?</h2>
+      <p>
+        This will appear next to your questions and in the leaderboard. You can change it later.
+      </p>
+      <input id="nameInput" type="text" maxlength="80" placeholder="E.g. Alex, Priya, Lee" />
+      <div class="error-message" id="nameError"></div>
+      <div class="name-modal-footer">
+        <span>It doesn’t have to be your full name.</span>
+        <button id="saveNameBtn" class="btn btn-primary" type="button">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESENTER APP -->
+  <div id="presenterApp" class="shell shell-presenter">
+    <div class="presenter-top-row">
+      <div class="qr-panel">
+        <div class="qr-img-wrap">
+          <!-- Replace with actual QR pointing to attendee URL (without mode param) -->
+          <img src="qr-placeholder.png" alt="Scan to join" />
+        </div>
+        <div class="qr-text">
+          <h1>MongoDB Discovery Questions</h1>
+          <p>
+            Ask everyone to scan this code to submit and vote on discovery questions.
+          </p>
+          <div class="qr-url" id="presenterQrUrl"></div>
+        </div>
+      </div>
+      <div class="presenter-controls">
+        <div class="presenter-controls-top">
+          <h2>Session control</h2>
+          <p>
+            Drive the flow from entries → 1‑minute voting → results. Phase:
+            <strong id="presenterPhaseLabel">Loading…</strong>
+          </p>
+        </div>
+        <div class="presenter-controls-bottom">
+          <div>
+            <div style="margin-bottom:4px;">
+              <button id="finishEntriesBtn" class="btn btn-primary" type="button">
+                Finish entries &amp; start 1‑minute voting
+              </button>
+            </div>
+            <div style="font-size:0.78rem;">
+              <span>After voting ends, results appear automatically.</span>
+            </div>
+            <div id="presenterUserCount"
+                 style="margin-top:4px;font-size:0.78rem;color:var(--mdb-text-muted);">
+              Attendees: 0
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.78rem;color:var(--mdb-text-muted);">Countdown</div>
+            <div class="presenter-countdown countdown-number" id="presenterCountdown">–</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="presenterEntryView" class="board hidden">
+      <div class="board-grid">
+        <div class="board-column">
+          <div class="board-column-header">
+            <h3>Users</h3>
+            <p>Personas, user journeys, stakeholders.</p>
+          </div>
+          <div id="boardUsers" class="board-list"></div>
+        </div>
+        <div class="board-column">
+          <div class="board-column-header">
+            <h3>Queries</h3>
+            <p>Access patterns, latency, workloads.</p>
+          </div>
+          <div id="boardQueries" class="board-list"></div>
+        </div>
+        <div class="board-column">
+          <div class="board-column-header">
+            <h3>Data Sources</h3>
+            <p>Upstream systems, feeds, and sync.</p>
+          </div>
+          <div id="boardDatasources" class="board-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="presenterVotingView" class="board hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:0.86rem;">
+        <div>
+          <strong>Voting in progress</strong> &mdash; attendees are picking their top 3 per column.
+        </div>
+        <div>
+          <span class="countdown-pill">
+            Time left: <span id="presenterVotingCountdown" class="countdown-number">60</span>s
+          </span>
+        </div>
+      </div>
+      <div class="board-grid">
+        <div class="board-column">
+          <div class="board-column-header">
+            <h3>Users</h3>
+          </div>
+          <div id="boardUsersVoting" class="board-list"></div>
+        </div>
+        <div class="board-column">
+          <div class="board-column-header">
+            <h3>Queries</h3>
+          </div>
+          <div id="boardQueriesVoting" class="board-list"></div>
+        </div>
+        <div class="board-column">
+          <div class="board-column-header">
+            <h3>Data Sources</h3>
+          </div>
+          <div id="boardDatasourcesVoting" class="board-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="presenterResultsView" class="board hidden">
+      <div style="margin-bottom:8px;">
+        <h2 style="margin:0 0 2px;font-size:1.05rem;">Top questions &amp; best asker</h2>
+        <p style="margin:0;font-size:0.86rem;color:var(--mdb-text-muted);">
+          Share why these are strong discovery questions for MongoDB opportunities.
+        </p>
+        <div style="margin-top:6px;">
+          <button id="resetSessionBtn" class="btn btn-ghost" type="button">
+            Wipe questions &amp; votes and start a new round
+          </button>
+        </div>
+      </div>
+      <div class="results-grid">
+        <div class="results-column">
+          <h3>Users</h3>
+          <div id="resultsUsers"></div>
+        </div>
+        <div class="results-column">
+          <h3>Queries</h3>
+          <div id="resultsQueries"></div>
+        </div>
+        <div class="results-column">
+          <h3>Data Sources</h3>
+          <div id="resultsDatasources"></div>
+        </div>
+      </div>
+      <div id="bestAsker" class="best-asker hidden"></div>
+      <div id="topQuestion" class="best-asker hidden" style="margin-top:8px;"></div>
+    </div>
+
+    <footer>
+      Open this URL with <code>?mode=presenter</code> for the presenter view.
+    </footer>
+  </div>
+
+  <!-- Firebase SDKs + App Logic -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // ===== CONFIGURATION =====
+    var firebaseConfig = {
+      apiKey: "AIzaSyBGqyXfG6URQjF-bahZJe9LLA8IsM4Oum0",
+      authDomain: "mongodb-discovery-workshop.firebaseapp.com",
+      databaseURL: "https://mongodb-discovery-workshop-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "mongodb-discovery-workshop",
+      storageBucket: "mongodb-discovery-workshop.firebasestorage.app",
+      messagingSenderId: "356273976982",
+      appId: "1:356273976982:web:419358a55b6e5fba2ab4b7"
+    };
+
+    var SESSION_ID = "mongodb-discovery-session-1";
+    var VOTING_DURATION_MS = 60000;
+
+    firebase.initializeApp(firebaseConfig);
+
+    var db = firebase.database();
+    var sessionRef = db.ref("sessions/" + SESSION_ID);
+    var configRef = sessionRef.child("config");
+    var attendeesRef = sessionRef.child("attendees");
+    var questionsRef = sessionRef.child("questions");
+    var votesRef = sessionRef.child("votes");
+
+    // Server time offset from Firebase
+    var timeOffsetMs = 0; // serverTime - localTime
+    db.ref(".info/serverTimeOffset").on("value", function (snap) {
+      var off = snap.val();
+      timeOffsetMs = typeof off === "number" ? off : 0;
+    });
+
+    // MODE
+    var params = new URLSearchParams(window.location.search);
+    var isPresenter =
+      params.get("mode") === "presenter" ||
+      params.get("presenter") === "1";
+
+    if (isPresenter) {
+      document.body.classList.add("presenter");
+      document.getElementById("presenterApp").style.display = "block";
+    } else {
+      document.getElementById("attendeeApp").style.display = "block";
+    }
+
+    // SHARED STATE
+    var sessionConfig = {
+      phase: "entry",
+      votingStartedAt: null,
+      votingDurationMs: VOTING_DURATION_MS
+    };
+
+    var questionsMap = {};
+    var votesMap = {};
+
+    var votingEndTimeMs = null;
+    var countdownIntervalId = null;
+
+    function ensureCountdownInterval() {
+      if (countdownIntervalId != null) return;
+      countdownIntervalId = setInterval(updateCountdowns, 300);
+    }
+
+    function clearCountdownInterval() {
+      if (countdownIntervalId != null) {
+        clearInterval(countdownIntervalId);
+        countdownIntervalId = null;
+      }
+    }
+
+    function genId() {
+      return "u_" + Math.random().toString(36).substr(2, 9);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/[&<>"']/g, function (ch) {
+        switch (ch) {
+          case "&": return "&amp;";
+          case "<": return "&lt;";
+          case ">": return "&gt;";
+          case '"': return "&quot;";
+          case "'": return "&#039;";
+        }
+      });
+    }
+
+    // ===== ATTENDEE LOGIC =====
+    (function initAttendee() {
+      if (isPresenter) return;
+
+      var attendeeNameLabel = document.getElementById("attendeeNameLabel");
+      var attendeePhaseLabel = document.getElementById("attendeePhaseLabel");
+      var attendeeCountdownWrapper = document.getElementById("attendeeCountdownWrapper");
+      var attendeeCountdownEl = document.getElementById("attendeeCountdown");
+      var attendeeVotingCountdownEl = document.getElementById("attendeeVotingCountdown");
+
+      var attendeeEntryView = document.getElementById("attendeeEntryView");
+      var attendeeVotingView = document.getElementById("attendeeVotingView");
+      var attendeeResultsView = document.getElementById("attendeeResultsView");
+
+      var nameModalBackdrop = document.getElementById("nameModalBackdrop");
+      var nameInput = document.getElementById("nameInput");
+      var nameError = document.getElementById("nameError");
+      var saveNameBtn = document.getElementById("saveNameBtn");
+      var editNameBtn = document.getElementById("editNameBtn");
+
+      var inputUsers = document.getElementById("inputUsers");
+      var inputQueries = document.getElementById("inputQueries");
+      var inputDatasources = document.getElementById("inputDatasources");
+      var submitQuestionsBtn = document.getElementById("submitQuestionsBtn");
+      var entryError = document.getElementById("entryError");
+
+      var myUsersList = document.getElementById("myUsersList");
+      var myQueriesList = document.getElementById("myQueriesList");
+      var myDatasourcesList = document.getElementById("myDatasourcesList");
+
+      var voteListUsers = document.getElementById("voteListUsers");
+      var voteListQueries = document.getElementById("voteListQueries");
+      var voteListDatasources = document.getElementById("voteListDatasources");
+
+      var localUserId = localStorage.getItem("mdb_disc_userId");
+      if (!localUserId) {
+        localUserId = genId();
+        localStorage.setItem("mdb_disc_userId", localUserId);
+      }
+
+      var localName = localStorage.getItem("mdb_disc_name") || "";
+      if (localName) {
+        attendeeNameLabel.textContent = localName;
+      }
+
+      function showNameModal() {
+        nameError.textContent = "";
+        nameInput.value = localName || "";
+        nameModalBackdrop.classList.remove("hidden");
+        nameInput.focus();
+      }
+
+      function hideNameModal() {
+        nameModalBackdrop.classList.add("hidden");
+      }
+
+      function saveName() {
+        var name = (nameInput.value || "").trim();
+        if (!name) {
+          nameError.textContent = "Please enter a name or nickname.";
+          return;
+        }
+        localName = name;
+        localStorage.setItem("mdb_disc_name", localName);
+        attendeeNameLabel.textContent = localName;
+        attendeesRef.child(localUserId).update({
+          name: localName,
+          updatedAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        hideNameModal();
+      }
+
+      if (!localName) {
+        showNameModal();
+      }
+
+      saveNameBtn.addEventListener("click", saveName);
+      nameInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          saveName();
+        }
+      });
+
+      editNameBtn.addEventListener("click", function () {
+        showNameModal();
+      });
+
+      // Question submission
+      submitQuestionsBtn.addEventListener("click", function () {
+        if (sessionConfig.phase !== "entry") {
+          entryError.textContent = "Entries are closed. Voting is in progress or finished.";
+          return;
+        }
+        entryError.textContent = "";
+        var usersText = (inputUsers.value || "").trim();
+        var queriesText = (inputQueries.value || "").trim();
+        var dsText = (inputDatasources.value || "").trim();
+
+        if (!usersText && !queriesText && !dsText) {
+          entryError.textContent = "Add at least one question before submitting.";
+          return;
+        }
+
+        submitQuestionsBtn.disabled = true;
+        var updates = {};
+        var now = firebase.database.ServerValue.TIMESTAMP;
+
+        function addQuestionIf(text, categoryKey) {
+          if (!text) return;
+          var newRef = questionsRef.push();
+          updates[newRef.key] = {
+            text: text,
+            category: categoryKey,
+            authorId: localUserId,
+            authorName: localName || "Anonymous",
+            createdAt: now
+          };
+        }
+
+        addQuestionIf(usersText, "users");
+        addQuestionIf(queriesText, "queries");
+        addQuestionIf(dsText, "datasources");
+
+        questionsRef.update(updates, function (err) {
+          submitQuestionsBtn.disabled = false;
+          if (err) {
+            console.error("Error submitting questions", err);
+            entryError.textContent = "Something went wrong. Please try again.";
+            return;
+          }
+          inputUsers.value = "";
+          inputQueries.value = "";
+          inputDatasources.value = "";
+        });
+      });
+
+      function renderMyQuestions() {
+        myUsersList.innerHTML = "";
+        myQueriesList.innerHTML = "";
+        myDatasourcesList.innerHTML = "";
+
+        Object.keys(questionsMap).forEach(function (id) {
+          var q = questionsMap[id];
+          if (!q || q.authorId !== localUserId) return;
+          var container;
+          if (q.category === "users") container = myUsersList;
+          else if (q.category === "queries") container = myQueriesList;
+          else if (q.category === "datasources") container = myDatasourcesList;
+          else return;
+
+          var div = document.createElement("div");
+          div.className = "my-question-item";
+          div.dataset.qid = id;
+
+          var textDiv = document.createElement("div");
+          textDiv.className = "my-question-text";
+          textDiv.textContent = q.text || "";
+
+          var actionsDiv = document.createElement("div");
+          actionsDiv.className = "my-question-actions";
+
+          var editBtn = document.createElement("button");
+          editBtn.className = "btn btn-ghost";
+          editBtn.type = "button";
+          editBtn.textContent = "Edit";
+          editBtn.addEventListener("click", function () {
+            if (sessionConfig.phase !== "entry") return;
+            var current = q.text || "";
+            var updated = window.prompt("Update your question:", current);
+            if (updated == null) return;
+            updated = updated.trim();
+            if (!updated) return;
+            questionsRef.child(id).update({ text: updated });
+          });
+
+          var delBtn = document.createElement("button");
+          delBtn.className = "btn btn-ghost btn-danger";
+          delBtn.type = "button";
+          delBtn.textContent = "Delete";
+          delBtn.addEventListener("click", function () {
+            if (sessionConfig.phase !== "entry") return;
+            if (!window.confirm("Delete this question?")) return;
+            questionsRef.child(id).remove();
+          });
+
+          actionsDiv.appendChild(editBtn);
+          actionsDiv.appendChild(delBtn);
+
+          div.appendChild(textDiv);
+          div.appendChild(actionsDiv);
+
+          container.appendChild(div);
+        });
+
+        if (!myUsersList.innerHTML) myUsersList.textContent = "No questions yet.";
+        if (!myQueriesList.innerHTML) myQueriesList.textContent = "No questions yet.";
+        if (!myDatasourcesList.innerHTML) myDatasourcesList.textContent = "No questions yet.";
+      }
+
+      var myVotes = {
+        users: {},
+        queries: {},
+        datasources: {}
+      };
+
+      function loadMyVotesFromMap() {
+        var v = votesMap[localUserId] || {};
+        myVotes.users = v.users || {};
+        myVotes.queries = v.queries || {};
+        myVotes.datasources = v.datasources || {};
+      }
+
+      function saveMyVotes() {
+        votesRef.child(localUserId).set({
+          users: myVotes.users,
+          queries: myVotes.queries,
+          datasources: myVotes.datasources
+        });
+      }
+
+      function toggleVote(categoryKey, questionId) {
+        var catVotes = myVotes[categoryKey] || {};
+        var already = !!catVotes[questionId];
+        if (already) {
+          delete catVotes[questionId];
+        } else {
+          var count = Object.keys(catVotes).length;
+          if (count >= 3) return;
+          catVotes[questionId] = true;
+        }
+        myVotes[categoryKey] = catVotes;
+        saveMyVotes();
+        renderVotingLists();
+      }
+
+      function renderVotingLists() {
+        voteListUsers.innerHTML = "";
+        voteListQueries.innerHTML = "";
+        voteListDatasources.innerHTML = "";
+
+        var questionIds = Object.keys(questionsMap).sort(function (a, b) {
+          var qa = questionsMap[a], qb = questionsMap[b];
+          var ta = qa && qa.createdAt || 0;
+          var tb = qb && qb.createdAt || 0;
+          return ta - tb;
+        });
+
+        questionIds.forEach(function (id) {
+          var q = questionsMap[id];
+          if (!q) return;
+
+          // Hide own questions in voting
+          if (q.authorId === localUserId) return;
+
+          var parentList;
+          if (q.category === "users") parentList = voteListUsers;
+          else if (q.category === "queries") parentList = voteListQueries;
+          else if (q.category === "datasources") parentList = voteListDatasources;
+          else return;
+
+          var item = document.createElement("div");
+          item.className = "vote-item";
+
+          var checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = !!(myVotes[q.category] && myVotes[q.category][id]);
+          checkbox.addEventListener("change", function () {
+            toggleVote(q.category, id);
+          });
+
+          var body = document.createElement("div");
+          body.className = "vote-item-body";
+
+          var textDiv = document.createElement("div");
+          textDiv.className = "vote-item-text";
+          textDiv.textContent = q.text || "";
+
+          var metaDiv = document.createElement("div");
+          metaDiv.className = "vote-item-meta";
+          metaDiv.textContent = (q.authorName || "Anonymous");
+
+          body.appendChild(textDiv);
+          body.appendChild(metaDiv);
+
+          item.appendChild(checkbox);
+          item.appendChild(body);
+
+          parentList.appendChild(item);
+        });
+
+        if (!voteListUsers.innerHTML) voteListUsers.textContent = "No questions in this category.";
+        if (!voteListQueries.innerHTML) voteListQueries.textContent = "No questions in this category.";
+        if (!voteListDatasources.innerHTML) voteListDatasources.textContent = "No questions in this category.";
+      }
+
+      function setAttendeePhase(phase) {
+        attendeePhaseLabel.textContent =
+          phase === "entry" ? "Entry (submitting questions)" :
+          phase === "voting" ? "Voting" :
+          phase === "results" ? "Results" : phase;
+
+        attendeeEntryView.classList.add("hidden");
+        attendeeVotingView.classList.add("hidden");
+        attendeeResultsView.classList.add("hidden");
+        attendeeCountdownWrapper.classList.add("hidden");
+
+        if (phase === "entry") {
+          attendeeEntryView.classList.remove("hidden");
+        } else if (phase === "voting") {
+          attendeeVotingView.classList.remove("hidden");
+          attendeeCountdownWrapper.classList.remove("hidden");
+          ensureCountdownInterval();
+        } else if (phase === "results") {
+          attendeeResultsView.classList.remove("hidden");
+          clearCountdownInterval();
+        }
+      }
+
+      configRef.on("value", function (snap) {
+        var cfg = snap.val() || {};
+        sessionConfig.phase = cfg.phase || "entry";
+        sessionConfig.votingStartedAt = cfg.votingStartedAt || null;
+        sessionConfig.votingDurationMs = cfg.votingDurationMs || VOTING_DURATION_MS;
+
+        if (sessionConfig.votingStartedAt) {
+          votingEndTimeMs = sessionConfig.votingStartedAt + sessionConfig.votingDurationMs;
+          ensureCountdownInterval();
+        }
+
+        setAttendeePhase(sessionConfig.phase);
+        if (sessionConfig.phase === "voting") {
+          renderVotingLists();
+        }
+      });
+
+      questionsRef.on("value", function (snap) {
+        questionsMap = snap.val() || {};
+        renderMyQuestions();
+        if (sessionConfig.phase === "voting") {
+          renderVotingLists();
+        }
+      });
+
+      votesRef.child(localUserId).on("value", function (snap) {
+        votesMap[localUserId] = snap.val() || {};
+        loadMyVotesFromMap();
+        if (sessionConfig.phase === "voting") {
+          renderVotingLists();
+        }
+      });
+
+      function updateAttendeeCountdown() {
+        if (!votingEndTimeMs || sessionConfig.phase !== "voting") {
+          attendeeCountdownEl.textContent = "–";
+          attendeeVotingCountdownEl.textContent = "–";
+          return;
+        }
+        var serverNow = Date.now() + timeOffsetMs;
+        var remaining = votingEndTimeMs - serverNow;
+        var secs = Math.max(0, Math.ceil(remaining / 1000));
+        attendeeCountdownEl.textContent = secs;
+        attendeeVotingCountdownEl.textContent = secs;
+      }
+
+      window.__updateAttendeeCountdown = updateAttendeeCountdown;
+      ensureCountdownInterval();
+    })();
+
+    // ===== PRESENTER LOGIC =====
+    (function initPresenter() {
+      if (!isPresenter) return;
+
+      var presenterQrUrl = document.getElementById("presenterQrUrl");
+      var presenterPhaseLabel = document.getElementById("presenterPhaseLabel");
+      var finishEntriesBtn = document.getElementById("finishEntriesBtn");
+      var presenterCountdownEl = document.getElementById("presenterCountdown");
+      var presenterVotingCountdownEl = document.getElementById("presenterVotingCountdown");
+      var presenterUserCountEl = document.getElementById("presenterUserCount");
+      var resetSessionBtn = document.getElementById("resetSessionBtn");
+
+      var presenterEntryView = document.getElementById("presenterEntryView");
+      var presenterVotingView = document.getElementById("presenterVotingView");
+      var presenterResultsView = document.getElementById("presenterResultsView");
+
+      var boardUsers = document.getElementById("boardUsers");
+      var boardQueries = document.getElementById("boardQueries");
+      var boardDatasources = document.getElementById("boardDatasources");
+
+      var boardUsersVoting = document.getElementById("boardUsersVoting");
+      var boardQueriesVoting = document.getElementById("boardQueriesVoting");
+      var boardDatasourcesVoting = document.getElementById("boardDatasourcesVoting");
+
+      var resultsUsers = document.getElementById("resultsUsers");
+      var resultsQueries = document.getElementById("resultsQueries");
+      var resultsDatasources = document.getElementById("resultsDatasources");
+      var bestAskerDiv = document.getElementById("bestAsker");
+      var topQuestionDiv = document.getElementById("topQuestion");
+
+      var cleanUrl = window.location.href.split("?")[0];
+      presenterQrUrl.textContent = cleanUrl;
+
+      attendeesRef.on("value", function (snap) {
+        if (!presenterUserCountEl) return;
+        var val = snap.val() || {};
+        var count = Object.keys(val).length;
+        presenterUserCountEl.textContent = "Attendees: " + count;
+      });
+
+      function setPresenterPhase(phase) {
+        presenterPhaseLabel.textContent =
+          phase === "entry" ? "Entry (submitting questions)" :
+          phase === "voting" ? "Voting" :
+          phase === "results" ? "Results" : phase;
+
+        presenterEntryView.classList.add("hidden");
+        presenterVotingView.classList.add("hidden");
+        presenterResultsView.classList.add("hidden");
+
+        if (phase === "entry") {
+          presenterEntryView.classList.remove("hidden");
+          finishEntriesBtn.disabled = false;
+        } else if (phase === "voting") {
+          presenterVotingView.classList.remove("hidden");
+          finishEntriesBtn.disabled = true;
+          ensureCountdownInterval();
+        } else if (phase === "results") {
+          presenterResultsView.classList.remove("hidden");
+          finishEntriesBtn.disabled = true;
+          clearCountdownInterval();
+          computeAndRenderResults();
+        }
+      }
+
+      finishEntriesBtn.addEventListener("click", function () {
+        if (sessionConfig.phase !== "entry") return;
+        if (!window.confirm("Finish entries and start 1‑minute voting?")) return;
+
+        configRef.update({
+          phase: "voting",
+          votingStartedAt: firebase.database.ServerValue.TIMESTAMP,
+          votingDurationMs: VOTING_DURATION_MS
+        });
+      });
+
+      if (resetSessionBtn) {
+        resetSessionBtn.addEventListener("click", function () {
+          if (!window.confirm("Wipe all questions and votes and start a fresh round?")) return;
+          resetSessionBtn.disabled = true;
+
+          var updates = {
+            questions: null,
+            votes: null,
+            config: {
+              phase: "entry",
+              votingDurationMs: VOTING_DURATION_MS
+            }
+          };
+
+          sessionRef.update(updates, function (err) {
+            resetSessionBtn.disabled = false;
+            if (err) {
+              console.error("Error resetting session", err);
+              alert("Could not reset session. Check console for details.");
+              return;
+            }
+            votingEndTimeMs = null;
+          });
+        });
+      }
+
+      configRef.on("value", function (snap) {
+        var cfg = snap.val() || {};
+        sessionConfig.phase = cfg.phase || "entry";
+        sessionConfig.votingStartedAt = cfg.votingStartedAt || null;
+        sessionConfig.votingDurationMs = cfg.votingDurationMs || VOTING_DURATION_MS;
+
+        if (sessionConfig.votingStartedAt) {
+          votingEndTimeMs = sessionConfig.votingStartedAt + sessionConfig.votingDurationMs;
+          ensureCountdownInterval();
+        }
+
+        setPresenterPhase(sessionConfig.phase);
+      });
+
+      questionsRef.on("value", function (snap) {
+        questionsMap = snap.val() || {};
+        renderBoard();
+        if (sessionConfig.phase === "voting") {
+          renderBoardVoting();
+        }
+        if (sessionConfig.phase === "results") {
+          computeAndRenderResults();
+        }
+      });
+
+      votesRef.on("value", function (snap) {
+        votesMap = snap.val() || {};
+        if (sessionConfig.phase === "results") {
+          computeAndRenderResults();
+        }
+      });
+
+      function renderBoard() {
+        boardUsers.innerHTML = "";
+        boardQueries.innerHTML = "";
+        boardDatasources.innerHTML = "";
+
+        var ids = Object.keys(questionsMap).sort(function (a, b) {
+          var qa = questionsMap[a], qb = questionsMap[b];
+          var ta = qa && qa.createdAt || 0;
+          var tb = qb && qb.createdAt || 0;
+          return ta - tb;
+        });
+
+        ids.forEach(function (id) {
+          var q = questionsMap[id];
+          if (!q) return;
+
+          var parent;
+          if (q.category === "users") parent = boardUsers;
+          else if (q.category === "queries") parent = boardQueries;
+          else if (q.category === "datasources") parent = boardDatasources;
+          else return;
+
+          var item = document.createElement("div");
+          item.className = "board-item";
+
+          var textDiv = document.createElement("div");
+          textDiv.className = "board-item-text";
+          textDiv.textContent = q.text || "";
+
+          var metaDiv = document.createElement("div");
+          metaDiv.className = "board-item-meta";
+          metaDiv.innerHTML =
+            "<span>" + escapeHtml(q.authorName || "Anonymous") + "</span>" +
+            "<span>" + (q.createdAt ? new Date(q.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "") + "</span>";
+
+          item.appendChild(textDiv);
+          item.appendChild(metaDiv);
+          parent.appendChild(item);
+        });
+
+        if (!boardUsers.innerHTML) boardUsers.textContent = "No questions yet.";
+        if (!boardQueries.innerHTML) boardQueries.textContent = "No questions yet.";
+        if (!boardDatasources.innerHTML) boardDatasources.textContent = "No questions yet.";
+      }
+
+      function renderBoardVoting() {
+        boardUsersVoting.innerHTML = "";
+        boardQueriesVoting.innerHTML = "";
+        boardDatasourcesVoting.innerHTML = "";
+
+        var ids = Object.keys(questionsMap).sort(function (a, b) {
+          var qa = questionsMap[a], qb = questionsMap[b];
+          var ta = qa && qa.createdAt || 0;
+          var tb = qb && qb.createdAt || 0;
+          return ta - tb;
+        });
+
+        ids.forEach(function (id) {
+          var q = questionsMap[id];
+          if (!q) return;
+          var parent;
+          if (q.category === "users") parent = boardUsersVoting;
+          else if (q.category === "queries") parent = boardQueriesVoting;
+          else if (q.category === "datasources") parent = boardDatasourcesVoting;
+          else return;
+
+          var item = document.createElement("div");
+          item.className = "board-item";
+
+          var textDiv = document.createElement("div");
+          textDiv.className = "board-item-text";
+          textDiv.textContent = q.text || "";
+
+          var metaDiv = document.createElement("div");
+          metaDiv.className = "board-item-meta";
+          metaDiv.innerHTML =
+            "<span>" + escapeHtml(q.authorName || "Anonymous") + "</span>";
+
+          item.appendChild(textDiv);
+          item.appendChild(metaDiv);
+          parent.appendChild(item);
+        });
+
+        if (!boardUsersVoting.innerHTML) boardUsersVoting.textContent = "No questions yet.";
+        if (!boardQueriesVoting.innerHTML) boardQueriesVoting.textContent = "No questions yet.";
+        if (!boardDatasourcesVoting.innerHTML) boardDatasourcesVoting.textContent = "No questions yet.";
+      }
+
+      function computeAndRenderResults() {
+        var voteCounts = {};
+        Object.keys(questionsMap).forEach(function (id) {
+          var q = questionsMap[id];
+          if (!q) return;
+          voteCounts[id] = {
+            count: 0,
+            category: q.category,
+            authorId: q.authorId,
+            authorName: q.authorName || "Anonymous"
+          };
+        });
+
+        Object.keys(votesMap).forEach(function (userId) {
+          var v = votesMap[userId] || {};
+          ["users", "queries", "datasources"].forEach(function (cat) {
+            var catVotes = v[cat] || {};
+            Object.keys(catVotes).forEach(function (qid) {
+              if (voteCounts[qid]) {
+                voteCounts[qid].count += 1;
+              }
+            });
+          });
+        });
+
+        var byCategory = {
+          users: [],
+          queries: [],
+          datasources: []
+        };
+        Object.keys(voteCounts).forEach(function (id) {
+          var info = voteCounts[id];
+          var q = questionsMap[id];
+          if (!q || !info.category) return;
+          byCategory[info.category].push({
+            id: id,
+            question: q,
+            votes: info.count
+          });
+        });
+
+        function sortCategory(arr) {
+          arr.sort(function (a, b) {
+            if (b.votes !== a.votes) return b.votes - a.votes;
+            var ta = a.question.createdAt || 0;
+            var tb = b.question.createdAt || 0;
+            return ta - tb;
+          });
+        }
+
+        sortCategory(byCategory.users);
+        sortCategory(byCategory.queries);
+        sortCategory(byCategory.datasources);
+
+        function renderCategoryResults(container, arr) {
+          container.innerHTML = "";
+          if (!arr.length) {
+            container.textContent = "No questions / no votes.";
+            return;
+          }
+          var top = arr.slice(0, 3);
+          top.forEach(function (entry, idx) {
+            var div = document.createElement("div");
+            div.className = "results-item";
+
+            var rankDiv = document.createElement("div");
+            rankDiv.className = "results-item-rank";
+            var label = idx === 0 ? "1st" : idx === 1 ? "2nd" : "3rd";
+            rankDiv.textContent = label + " place \u2014 " + entry.votes + " vote" + (entry.votes === 1 ? "" : "s");
+
+            var textDiv = document.createElement("div");
+            textDiv.className = "results-item-text";
+            textDiv.textContent = entry.question.text || "";
+
+            var metaDiv = document.createElement("div");
+            metaDiv.className = "results-item-meta";
+            metaDiv.innerHTML =
+              "<span>" + escapeHtml(entry.question.authorName || "Anonymous") + "</span>" +
+              "<span>" + (entry.question.createdAt ? new Date(entry.question.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "") + "</span>";
+
+            div.appendChild(rankDiv);
+            div.appendChild(textDiv);
+            div.appendChild(metaDiv);
+            container.appendChild(div);
+          });
+        }
+
+        renderCategoryResults(resultsUsers, byCategory.users);
+        renderCategoryResults(resultsQueries, byCategory.queries);
+        renderCategoryResults(resultsDatasources, byCategory.datasources);
+
+        // Best asker(s)
+        var authorStats = {}; // authorId -> { name, votes, questions }
+        Object.keys(voteCounts).forEach(function (id) {
+          var info = voteCounts[id];
+          var q = questionsMap[id];
+          if (!q) return;
+          var aid = q.authorId || "unknown";
+          if (!authorStats[aid]) {
+            authorStats[aid] = {
+              name: q.authorName || "Anonymous",
+              votes: 0,
+              questions: 0
+            };
+          }
+          authorStats[aid].votes += info.count;
+          authorStats[aid].questions += 1;
+        });
+
+        var maxVotes = 0;
+        var topAskers = [];
+
+        Object.keys(authorStats).forEach(function (aid) {
+          var st = authorStats[aid];
+          if (st.votes > maxVotes) {
+            maxVotes = st.votes;
+            topAskers = [st];
+          } else if (st.votes === maxVotes && maxVotes > 0) {
+            topAskers.push(st);
+          }
+        });
+
+        if (maxVotes > 0 && topAskers.length) {
+          bestAskerDiv.classList.remove("hidden");
+          var names = topAskers.map(function (st) { return escapeHtml(st.name); }).join(", ");
+          bestAskerDiv.innerHTML =
+            "<strong>Best question asker" + (topAskers.length > 1 ? "s" : "") + ":</strong> " +
+            names +
+            " &mdash; " +
+            maxVotes +
+            " total vote" + (maxVotes === 1 ? "" : "s") +
+            " each.";
+        } else {
+          bestAskerDiv.classList.add("hidden");
+          bestAskerDiv.textContent = "";
+        }
+
+        // Top individual question(s) across all categories
+        var bestQuestionVotes = 0;
+        var topQuestions = [];
+
+        Object.keys(voteCounts).forEach(function (id) {
+          var info = voteCounts[id];
+          var q = questionsMap[id];
+          if (!q) return;
+          if (info.count > bestQuestionVotes) {
+            bestQuestionVotes = info.count;
+            topQuestions = [{ q: q, votes: info.count }];
+          } else if (info.count === bestQuestionVotes && bestQuestionVotes > 0) {
+            topQuestions.push({ q: q, votes: info.count });
+          }
+        });
+
+        if (bestQuestionVotes > 0 && topQuestions.length) {
+          topQuestionDiv.classList.remove("hidden");
+          var label = topQuestions.length > 1 ? "Top questions" : "Top question";
+          var html = "<strong>" + label + " overall:</strong><br/>";
+          topQuestions.forEach(function (entry, idx) {
+            var q = entry.q;
+            html +=
+              "&bull; " +
+              escapeHtml(q.text || "") +
+              " <span style=\"color:#a0b5c0;\">(" +
+              escapeHtml(q.category || "") +
+              ", " + escapeHtml(q.authorName || "Anonymous") +
+              ", " + entry.votes + " vote" + (entry.votes === 1 ? "" : "s") +
+              ")</span><br/>";
+          });
+          topQuestionDiv.innerHTML = html;
+        } else {
+          topQuestionDiv.classList.add("hidden");
+          topQuestionDiv.textContent = "";
+        }
+      }
+
+      function updatePresenterCountdown() {
+        if (!votingEndTimeMs || sessionConfig.phase !== "voting") {
+          presenterCountdownEl.textContent = "–";
+          presenterVotingCountdownEl.textContent = "–";
+          return;
+        }
+        var serverNow = Date.now() + timeOffsetMs;
+        var remaining = votingEndTimeMs - serverNow;
+        var secs = Math.max(0, Math.ceil(remaining / 1000));
+        presenterCountdownEl.textContent = secs;
+        presenterVotingCountdownEl.textContent = secs;
+
+        if (remaining <= 0 && sessionConfig.phase === "voting") {
+          configRef.update({ phase: "results" });
+        }
+      }
+
+      window.__updatePresenterCountdown = updatePresenterCountdown;
+
+      configRef.once("value").then(function (snap) {
+        if (!snap.exists()) {
+          configRef.set({
+            phase: "entry",
+            votingDurationMs: VOTING_DURATION_MS
+          });
+        }
+      });
+
+      ensureCountdownInterval();
+    })();
+
+    function updateCountdowns() {
+      if (isPresenter && typeof window.__updatePresenterCountdown === "function") {
+        window.__updatePresenterCountdown();
+      }
+      if (!isPresenter && typeof window.__updateAttendeeCountdown === "function") {
+        window.__updateAttendeeCountdown();
+      }
+    }
+  </script>
+</body>
+</html>

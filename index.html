@@ -858,7 +858,7 @@
         </div>
         <div>
           <span class="countdown-pill">
-            Time left: <span id="attendeeVotingCountdown" class="countdown-number">60</span>s
+            Time left: <span id="attendeeVotingCountdown" class="countdown-number">180</span>s
           </span>
         </div>
       </div>
@@ -935,7 +935,7 @@
         <div class="presenter-controls-top">
           <h2>Session control</h2>
           <p>
-            Drive the flow from entries → 1‑minute voting → results. Phase:
+            Drive the flow from entries → 3‑minute voting → results. Phase:
             <strong id="presenterPhaseLabel">Loading…</strong>
           </p>
         </div>
@@ -943,7 +943,7 @@
           <div>
             <div style="margin-bottom:4px;">
               <button id="finishEntriesBtn" class="btn btn-primary" type="button">
-                Finish entries &amp; start 1‑minute voting
+                Finish entries &amp; start 3‑minute voting
               </button>
             </div>
             <div style="font-size:0.78rem;">
@@ -995,7 +995,7 @@
         </div>
         <div>
           <span class="countdown-pill">
-            Time left: <span id="presenterVotingCountdown" class="countdown-number">60</span>s
+            Time left: <span id="presenterVotingCountdown" class="countdown-number">180</span>s
           </span>
         </div>
       </div>
@@ -1072,7 +1072,7 @@
       appId: "1:356273976982:web:419358a55b6e5fba2ab4b7"
     };
 
-    var SESSION_ID = "mongodb-discovery-session-2";
+    var SESSION_ID = "mongodb-discovery-session-3";
     var VOTING_DURATION_MS = 180000;
 
     firebase.initializeApp(firebaseConfig);
@@ -1582,7 +1582,7 @@
 
       finishEntriesBtn.addEventListener("click", function () {
         if (sessionConfig.phase !== "entry") return;
-        if (!window.confirm("Finish entries and start 1‑minute voting?")) return;
+        if (!window.confirm("Finish entries and start voting countdown?")) return;
 
         configRef.update({
           phase: "voting",
